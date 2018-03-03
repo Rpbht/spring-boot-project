@@ -18,5 +18,8 @@ public class ConstantValues {
 	public static final String USER_REGISTER = "/register";
 	public static final String USER_LOGIN_VIEW = "user/login";
 	public static final String USER_REGISTER_VIEW = "user/register";
+	public static final String USER_LOGGED_IN = "user/loggedin";
+	public static final String USER_REGISTERED = "user/registered";
+	public static final String USER_HOME = "user/home";
 
 }

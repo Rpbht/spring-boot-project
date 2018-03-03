@@ -19,7 +19,6 @@ public class UserController {
 	public ModelAndView loginPage(Model model) {
 		User user = new User();
 		return new ModelAndView(ConstantValues.USER_LOGIN_VIEW).addObject(user);
-
 	}
 
 	@GetMapping(value = ConstantValues.USER_REGISTER)
@@ -28,8 +27,13 @@ public class UserController {
 		return new ModelAndView(ConstantValues.USER_REGISTER_VIEW).addObject(user);
 	}
 
-	@PostMapping(value ="/abc")
-	public void re(@ModelAttribute("user") User user) {
-		System.out.println("sdsdssdsd:    "+user);
+	@GetMapping(value = ConstantValues.USER_REGISTERED)
+	public String registered(@ModelAttribute("user") User user) {
+		return ConstantValues.USER_LOGIN;
+	}
+
+	@GetMapping(value = ConstantValues.USER_LOGGED_IN)
+	public String loggedin(@ModelAttribute("user") User user) {
+		return ConstantValues.USER_HOME;
 	}
 }
