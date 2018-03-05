@@ -50,4 +50,8 @@ public class UserController {
 		return ConstantValues.DELETE_USER;
 	}
 
+	@RequestMapping(value = "/{email}/{password}", method = RequestMethod.POST)
+	public User findUser(@PathVariable String email, @PathVariable String password) {
+		return userService.isVAlid(email, password);
+	}
 }
