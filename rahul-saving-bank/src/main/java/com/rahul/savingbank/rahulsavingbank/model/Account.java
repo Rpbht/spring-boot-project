@@ -1,6 +1,9 @@
 package com.rahul.savingbank.rahulsavingbank.model;
 
-public class Account {
+import java.io.Serializable;
+import java.util.List;
+
+public class Account implements Serializable {
 
 	private Long id;
 	private Long accountNumber;
@@ -8,6 +11,7 @@ public class Account {
 	private String branch;
 	private long amount;
 	private String created;
+	private List<Transaction> transactions;
 
 	public Account() {
 	}
@@ -78,10 +82,17 @@ public class Account {
 		this.created = created;
 	}
 
+	public List<Transaction> getTransactions() {
+		return transactions;
+	}
+
+	public void setTransactions(List<Transaction> transactions) {
+		this.transactions = transactions;
+	}
+
 	@Override
 	public String toString() {
 		return "Account [id=" + id + ", accountNumber=" + accountNumber + ", ifscCode=" + ifscCode + ", branch="
-				+ branch + ", amount=" + amount + ", created=" + created + "]";
+				+ branch + ", amount=" + amount + ", created=" + created + ", transactions=" + transactions + "]";
 	}
-
 }

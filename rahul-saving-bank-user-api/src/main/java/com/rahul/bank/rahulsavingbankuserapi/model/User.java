@@ -1,7 +1,5 @@
 package com.rahul.bank.rahulsavingbankuserapi.model;
 
-import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,7 +12,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @Entity
 @Table(name="user_tbl")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class User implements Serializable{
+public class User{
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)

@@ -18,15 +18,15 @@ public class AccountController {
 	@Autowired
 	private AccountService service;
 
-	@RequestMapping(value = "/{number}", method = RequestMethod.POST)
+	@RequestMapping(value = "/{number}", method = RequestMethod.GET)
 	public Account findAccount(@PathVariable Long number) {
 		return service.findAccount(number);
 	}
 
-	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
+/*	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	public Account getAccount(@PathVariable Long id) {
 		return service.getAccount(id);
-	}
+	}*/
 
 	@RequestMapping(method = RequestMethod.GET)
 	public List<Account> getAllAccounts() {
