@@ -1,7 +1,6 @@
 package com.rahul.bank.rahulsavingbankaccountapi.controller;
 
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,11 +21,6 @@ public class AccountController {
 	public Account findAccount(@PathVariable Long number) {
 		return service.findAccount(number);
 	}
-
-/*	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
-	public Account getAccount(@PathVariable Long id) {
-		return service.getAccount(id);
-	}*/
 
 	@RequestMapping(method = RequestMethod.GET)
 	public List<Account> getAllAccounts() {

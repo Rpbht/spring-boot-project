@@ -25,9 +25,12 @@
 		<div class="col-sm-4"></div>
 
 
+	<%if(request.getSession().getAttribute("msg") != null){%>
+	<%=request.getSession().getAttribute("msg")%>
+	<%} %>
 		<div class="col-sm-4">
 
-			<form:form modelAttribute="user" action="user/loggedin" method="post">
+			<form:form modelAttribute="user" action="/user/logged" method="post">
 
 				<form:input path="email" cssClass="form-control" required="required"
 					placeholder="Email" type="email" />

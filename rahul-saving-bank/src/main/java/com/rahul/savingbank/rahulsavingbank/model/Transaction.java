@@ -7,6 +7,7 @@ public class Transaction {
 	private Long amount;
 	private Long accountNumber;
 	private String created;
+	private Account accountDetails;
 
 	public Transaction() {
 	}
@@ -66,9 +67,17 @@ public class Transaction {
 		this.created = created;
 	}
 
+	public Account getAccountDetails() {
+		return accountDetails;
+	}
+
+	public void setAccountDetails(Account accountDetails) {
+		this.accountDetails = accountDetails;
+	}
+
 	@Override
 	public String toString() {
 		return "Transaction [id=" + id + ", ticket=" + ticket + ", amount=" + amount + ", accountNumber="
-				+ accountNumber + ", created=" + created + "]";
+				+ accountNumber + ", created=" + created + ", accountDetails=" + accountDetails + "]";
 	}
 }

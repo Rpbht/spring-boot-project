@@ -1,8 +1,5 @@
 package com.rahul.bank.rahulsavingbankaccountapi.model;
 
-import java.io.Serializable;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -12,34 +9,36 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
-@Table(name="transaction_tbl")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class Transaction implements Serializable{
+@Table(name = "transaction_tbl")
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
+public class Transaction {
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="transaction_id")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "transaction_id")
 	private Long id;
-	
-	@Column(name="ticket")
+
+	@Column(name = "ticket")
 	private String ticket;
-	
-	@Column(name="amount")
+
+	@Column(name = "amount")
 	private Long amount;
-	
-	@Column(name="accountNumber")
+
+	@Column(name = "accountNumber")
 	private Long accountNumber;
-	
-	@Column(name="created")
+
+	@Column(name = "created")
 	private String created;
 	
-	@ManyToOne(cascade=CascadeType.ALL,fetch=FetchType.EAGER)
-	@JoinColumn(name="account_id")
-	private Account account;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JsonIgnore
+	@JoinColumn(name = "account_id")
+	private Account accountDetails;
 
 	public Transaction() {
 	}
@@ -57,6 +56,26 @@ public class Transaction implements Serializable{
 		this.amount = amount;
 		this.accountNumber = accountNumber;
 		this.created = created;
+	}
+
+	public Transaction(Long id, String ticket, Long amount, Long accountNumber, String created,
+			Account accountDetails) {
+		super();
+		this.id = id;
+		this.ticket = ticket;
+		this.amount = amount;
+		this.accountNumber = accountNumber;
+		this.created = created;
+		this.accountDetails = accountDetails;
+	}
+
+	public Transaction(String ticket, Long amount, Long accountNumber, String created, Account accountDetails) {
+		super();
+		this.ticket = ticket;
+		this.amount = amount;
+		this.accountNumber = accountNumber;
+		this.created = created;
+		this.accountDetails = accountDetails;
 	}
 
 	public Long getId() {
@@ -98,19 +117,19 @@ public class Transaction implements Serializable{
 	public void setCreated(String created) {
 		this.created = created;
 	}
-
+	@JsonIgnore
 	public Account getAccount() {
-		return account;
+		return accountDetails;
 	}
 
 	public void setAccount(Account account) {
-		this.account = account;
+		this.accountDetails = account;
 	}
 
 	@Override
 	public String toString() {
 		return "Transaction [id=" + id + ", ticket=" + ticket + ", amount=" + amount + ", accountNumber="
-				+ accountNumber + ", created=" + created + ", account=" + account + "]";
+				+ accountNumber + ", created=" + created + ", accountDetails=" + accountDetails + "]";
 	}
 
 }

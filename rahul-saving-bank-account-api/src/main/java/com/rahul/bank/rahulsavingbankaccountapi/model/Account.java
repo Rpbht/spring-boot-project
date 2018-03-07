@@ -1,9 +1,6 @@
 package com.rahul.bank.rahulsavingbankaccountapi.model;
 
-import java.io.Serializable;
 import java.util.List;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -12,39 +9,34 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
-@Table(name="account_tbl")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class Account implements Serializable{
-
+@Table(name = "account_tbl")
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
+public class Account {
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="account_id")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "account_id")
 	private Long id;
-	
-	@Column(name="accountNumber")
+
+	@Column(name = "accountNumber")
 	private Long accountNumber;
-	
-	@Column(name="ifscCode")
+
+	@Column(name = "ifscCode")
 	private String ifscCode;
-	
-	@Column(name="branch")
+
+	@Column(name = "branch")
 	private String branch;
-	
-	@Column(name="amount")
+
+	@Column(name = "amount")
 	private long amount;
-	
-	@Column(name="created")
+
+	@Column(name = "created")
 	private String created;
-	
-	@OneToMany(mappedBy="account",cascade=CascadeType.ALL,fetch=FetchType.EAGER)
-	@JsonIgnore
+
+	@OneToMany(mappedBy = "accountDetails")
 	private List<Transaction> transactions;
-	
 
 	public Account() {
 	}
@@ -65,6 +57,29 @@ public class Account implements Serializable{
 		this.branch = branch;
 		this.amount = amount;
 		this.created = created;
+	}
+
+	public Account(Long id, Long accountNumber, String ifscCode, String branch, long amount, String created,
+			List<Transaction> transactions) {
+		super();
+		this.id = id;
+		this.accountNumber = accountNumber;
+		this.ifscCode = ifscCode;
+		this.branch = branch;
+		this.amount = amount;
+		this.created = created;
+		this.transactions = transactions;
+	}
+
+	public Account(Long accountNumber, String ifscCode, String branch, long amount, String created,
+			List<Transaction> transactions) {
+		super();
+		this.accountNumber = accountNumber;
+		this.ifscCode = ifscCode;
+		this.branch = branch;
+		this.amount = amount;
+		this.created = created;
+		this.transactions = transactions;
 	}
 
 	public Long getId() {
@@ -128,4 +143,5 @@ public class Account implements Serializable{
 		return "Account [id=" + id + ", accountNumber=" + accountNumber + ", ifscCode=" + ifscCode + ", branch="
 				+ branch + ", amount=" + amount + ", created=" + created + ", transactions=" + transactions + "]";
 	}
+
 }

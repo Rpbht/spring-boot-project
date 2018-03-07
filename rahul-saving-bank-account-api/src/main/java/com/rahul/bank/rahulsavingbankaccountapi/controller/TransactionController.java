@@ -7,26 +7,20 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.rahul.bank.rahulsavingbankaccountapi.model.Transaction;
 import com.rahul.bank.rahulsavingbankaccountapi.service.TransactionService;
 import com.rahul.bank.rahulsavingbankaccountapi.utils.ConstantValues;
 
 @RestController
-@RequestMapping(value="/data")
+@RequestMapping(value = "/data")
 public class TransactionController {
 
 	@Autowired
 	private TransactionService service;
 
-	@RequestMapping(value = "/{number}", method = RequestMethod.POST)
-	public Transaction findTransaction(@PathVariable Long accountNumber) {
-		return service.findTransaction(accountNumber);
-	}
-
-	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
-	public Transaction getTransaction(@PathVariable long id) {
-		return service.getTransaction(id);
+	@RequestMapping(value = "/{number}", method = RequestMethod.GET)
+	public Transaction findTransaction(@PathVariable Long number) {
+		return service.findTransaction(number);
 	}
 
 	@RequestMapping(method = RequestMethod.GET)

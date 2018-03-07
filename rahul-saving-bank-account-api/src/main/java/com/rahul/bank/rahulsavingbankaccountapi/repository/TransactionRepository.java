@@ -8,6 +8,6 @@ import com.rahul.bank.rahulsavingbankaccountapi.model.Transaction;
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
 
-	public Transaction findByAccount(Long accountNumber);
+	public Transaction findByAccountDetails(Long accountNumber);
 
 }

@@ -27,7 +27,7 @@
 
 		<div class="col-sm-4">
 
-			<form:form modelAttribute="user" action="user/registered" method="post">
+			<form:form modelAttribute="user" action="/user/registered" method="post">
 
 				<form:hidden path="Id" />
 

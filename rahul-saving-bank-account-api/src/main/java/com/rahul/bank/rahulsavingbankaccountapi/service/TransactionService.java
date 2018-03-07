@@ -16,7 +16,7 @@ public class TransactionService {
 	private TransactionRepository repository;
 	
 	public Transaction findTransaction(Long accountNumber){
-		return repository.findByAccount(accountNumber);
+		return repository.findByAccountDetails(accountNumber);
 	}
 	
 	public Transaction getTransaction(Long id){
