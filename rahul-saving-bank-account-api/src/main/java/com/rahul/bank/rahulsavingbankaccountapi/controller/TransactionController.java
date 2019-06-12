@@ -28,7 +28,7 @@ public class TransactionController {
 		return service.getAllTransaction();
 	}
 
-	@RequestMapping(method = RequestMethod.PUT)
+	@RequestMapping(method = RequestMethod.POST)
 	public Transaction saveTranasction(@RequestBody Transaction transaction) {
 		return service.saveTransaction(transaction);
 	}

@@ -1,7 +1,9 @@
 package com.rahul.savingbank.rahulsavingbank.controller;
 
 import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
+
 import com.rahul.savingbank.rahulsavingbank.model.Account;
 import com.rahul.savingbank.rahulsavingbank.model.Inquiry;
 import com.rahul.savingbank.rahulsavingbank.model.Transaction;
@@ -131,18 +134,17 @@ public class UserController {
 		}
 
 		Account transferer = account;
-		transferer.setId(account.getId());
 		transferer.setAmount(account.getAmount() - transaction.getAmount());
 
 		HttpEntity<Account> minusRequest = new HttpEntity<Account>(transferer, headers);
-		restTemplate.postForObject("http://localhost:8888/account", minusRequest, Account.class);
+		System.out.println("minus req: " + minusRequest);
+		restTemplate.put("http://localhost:8888/account", minusRequest, Account.class);
 
 		Account beneficiary = accountRespone;
-		beneficiary.setId(accountRespone.getId());
 		beneficiary.setAmount(accountRespone.getAmount() + transaction.getAmount());
 
 		HttpEntity<Account> plusRequest = new HttpEntity<Account>(beneficiary, headers);
-		restTemplate.postForObject("http://localhost:8888/account", plusRequest, Account.class);
+		restTemplate.put("http://localhost:8888/account", plusRequest, Account.class);
 
 		Transaction finalTransaction = new Transaction();
 		finalTransaction.setAccountNumber(beneficiary.getAccountNumber());
@@ -151,9 +153,10 @@ public class UserController {
 		finalTransaction.setTicket("RSBT" + System.currentTimeMillis());
 		finalTransaction.setAccountDetails(account);
 
-		System.out.println("before transaction entry: " + finalTransaction);
 		HttpEntity<Transaction> userRequest = new HttpEntity<Transaction>(finalTransaction, headers);
-		restTemplate.postForObject("http://localhost:8888/transactions", userRequest, Transaction.class);
+		System.out.println("transation call: " + restTemplate.postForObject("http://localhost:8888/transactions/data",
+				userRequest, Transaction.class));
+		;
 		return ConstantValues.USER_HOME;
 
 	}

@@ -24,7 +24,6 @@ public class UserController {
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	public User getUserById(@PathVariable Long id) {
-		System.out.println(userService.getUserById(id));
 		return userService.getUserById(id);
 	}
 
