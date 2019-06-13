@@ -22,6 +22,11 @@ public class TransactionController {
 	public Transaction findTransaction(@PathVariable Long number) {
 		return service.findTransaction(number);
 	}
+	
+	@RequestMapping(value = "account/{number}", method = RequestMethod.GET)
+	public List<Transaction> findTransactionByAccountNumber(@PathVariable Long number) {
+		return service.findTransactionByAccountNumber(number);
+	}
 
 	@RequestMapping(method = RequestMethod.GET)
 	public List<Transaction> getAllTransaction() {

@@ -28,6 +28,7 @@ public class ConstantValues {
 	public static final String USER_TRANSACTION = "transaction";
 	public static final String USER_TRANSACTION_VIEW = "user/transaction";
 	public static final String USER_TRANSFERED = "transfered";
+	public static final String USER_PRINT_PDF = "printPdf";
 	
 
 

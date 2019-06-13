@@ -82,7 +82,7 @@
 							Your Current balance is Rs.<%=account.getAmount()%></p>
 						<br> <br>
 						<h2>
-							<a href="/printPdf">Print Your Transactions Statment</a>
+							<a href="/user/printPdf">Print Your Transactions Statment</a>
 						</h2>
 					</div>
 				</div>
@@ -118,24 +118,3 @@
 </body>
 
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<%-- <h2><%=request.getSession().getAttribute("user")%></h2>
-<h2><%=request.getSession().getAttribute("account")%></h2> --%>

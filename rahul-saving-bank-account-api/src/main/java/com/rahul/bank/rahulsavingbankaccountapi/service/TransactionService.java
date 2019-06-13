@@ -19,6 +19,11 @@ public class TransactionService {
 		return repository.findByAccountDetails(accountNumber);
 	}
 	
+	public List<Transaction> findTransactionByAccountNumber(Long accountNumber){
+		
+		return repository.findByAccountNumber(accountNumber);
+	}
+	
 	public Transaction getTransaction(Long id){
 		return repository.getOne(id);
 	}
