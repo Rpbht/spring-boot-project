@@ -1,6 +1,10 @@
 package com.rahul.bank.rahulsavingbankaccountapi.model;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -9,12 +13,18 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name = "account_tbl")
-@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
-public class Account {
+public class Account implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4416431624631730585L;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "account_id")
@@ -35,7 +45,8 @@ public class Account {
 	@Column(name = "created")
 	private String created;
 
-	@OneToMany(mappedBy = "accountDetails")
+	@JsonManagedReference
+	@OneToMany(cascade=CascadeType.ALL,mappedBy="account",fetch=FetchType.EAGER)
 	private List<Transaction> transactions;
 
 	public Account() {

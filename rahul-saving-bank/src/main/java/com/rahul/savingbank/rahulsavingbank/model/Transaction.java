@@ -1,13 +1,22 @@
 package com.rahul.savingbank.rahulsavingbank.model;
 
-public class Transaction {
+import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
+public class Transaction implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7265667058750317996L;
 	private Long id;
 	private String ticket;
 	private Long amount;
 	private Long accountNumber;
 	private String created;
-	private Account accountDetails;
+	@JsonBackReference
+	private Account intended;
 
 	public Transaction() {
 	}
@@ -66,18 +75,21 @@ public class Transaction {
 	public void setCreated(String created) {
 		this.created = created;
 	}
+	
+	
 
-	public Account getAccountDetails() {
-		return accountDetails;
+	public Account getIntended() {
+		return intended;
 	}
 
-	public void setAccountDetails(Account accountDetails) {
-		this.accountDetails = accountDetails;
+	public void setIntended(Account intended) {
+		this.intended = intended;
 	}
 
 	@Override
 	public String toString() {
 		return "Transaction [id=" + id + ", ticket=" + ticket + ", amount=" + amount + ", accountNumber="
-				+ accountNumber + ", created=" + created + ", accountDetails=" + accountDetails + "]";
+				+ accountNumber + ", created=" + created + "]";
 	}
+
 }

@@ -60,7 +60,7 @@
 				<ul class="nav navbar-nav" data-0="margin-top:20px;"
 					data-300="margin-top:5px;">
 					<li><a>Your Account No: <%=user.getAccountNumber()%></a></li>
-					<li><a href="/user/transaction">Transaction</a></li>
+					<li><a href="/user/transaction">Transfer</a></li>
 					<li><a href="/user/contact">Contact</a></li>
 					<li><a href="/user/logout">Logout</a></li>
 				</ul>
@@ -82,7 +82,7 @@
 							Your Current balance is Rs.<%=account.getAmount()%></p>
 						<br> <br>
 						<h2>
-							<a href="/user/printPdf">Print Your Transactions Statment</a>
+							<a href="/user/printPdf">Download your statement</a>
 						</h2>
 					</div>
 				</div>

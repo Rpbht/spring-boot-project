@@ -15,10 +15,6 @@ public class TransactionService {
 	@Autowired
 	private TransactionRepository repository;
 	
-	public Transaction findTransaction(Long accountNumber){
-		return repository.findByAccountDetails(accountNumber);
-	}
-	
 	public List<Transaction> findTransactionByAccountNumber(Long accountNumber){
 		
 		return repository.findByAccountNumber(accountNumber);

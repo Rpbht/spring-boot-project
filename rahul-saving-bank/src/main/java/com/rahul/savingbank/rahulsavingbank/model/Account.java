@@ -3,14 +3,21 @@ package com.rahul.savingbank.rahulsavingbank.model;
 import java.io.Serializable;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 public class Account implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -431438419152420715L;
 	private Long id;
 	private Long accountNumber;
 	private String ifscCode;
 	private String branch;
 	private long amount;
 	private String created;
+	@JsonManagedReference
 	private List<Transaction> transactions;
 
 	public Account() {
@@ -95,4 +102,5 @@ public class Account implements Serializable {
 		return "Account [id=" + id + ", accountNumber=" + accountNumber + ", ifscCode=" + ifscCode + ", branch="
 				+ branch + ", amount=" + amount + ", created=" + created + ", transactions=" + transactions + "]";
 	}
+
 }

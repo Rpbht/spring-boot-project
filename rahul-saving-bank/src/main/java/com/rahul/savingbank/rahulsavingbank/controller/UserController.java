@@ -1,6 +1,9 @@
 package com.rahul.savingbank.rahulsavingbank.controller;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -9,7 +12,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +23,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
+import com.lowagie.text.Paragraph;
 import com.lowagie.text.Table;
 import com.lowagie.text.pdf.PdfWriter;
 import com.rahul.savingbank.rahulsavingbank.model.Account;
@@ -36,6 +39,7 @@ public class UserController {
 
 	protected RestTemplate restTemplate = new RestTemplate();
 	private HttpHeaders headers = StaticMethods.createHeaders("rpbht", "rpbht123");
+	SimpleDateFormat sdf = new SimpleDateFormat("HH:mm MMM dd,yyyy");
 
 	@GetMapping(value = ConstantValues.USER_LOGIN)
 	public ModelAndView loginPage(Model model) {
@@ -122,54 +126,53 @@ public class UserController {
 	public <T> String transfered(@ModelAttribute("transaction") Transaction transaction,
 			HttpServletRequest httpServletRequest) {
 
-		Account accountRespone = restTemplate
-				.exchange("http://localhost:8888/account/" + transaction.getAccountNumber(), HttpMethod.GET,
-						new HttpEntity<T>(headers), Account.class)
-				.getBody();
+		Account beneficiary = restTemplate.exchange("http://localhost:8888/account/" + transaction.getAccountNumber(),
+				HttpMethod.GET, new HttpEntity<T>(headers), Account.class).getBody();
 
-		if (accountRespone == null) {
+		if (beneficiary == null) {
 			httpServletRequest.getSession().setAttribute("bmsg", "please enter valid account number");
 			return ConstantValues.USER_TRANSACTION_VIEW;
 		}
+		Account transferer = (Account) httpServletRequest.getSession().getAttribute("account");
 
-		Account account = (Account) httpServletRequest.getSession().getAttribute("account");
-
-		if (transaction.getAmount() > account.getAmount()) {
+		if (beneficiary.getAccountNumber().equals(transferer.getAccountNumber())) {
+			httpServletRequest.getSession().setAttribute("bmsg", "You cannot transfer to your own account");
+			return ConstantValues.USER_TRANSACTION_VIEW;
+		}
+		if (transaction.getAmount() > transferer.getAmount()) {
 			httpServletRequest.getSession().setAttribute("bmsg", "You have not sufficient balance");
 			return ConstantValues.USER_TRANSACTION_VIEW;
 		}
 
-		Account transferer = account;
-		transferer.setAmount(account.getAmount() - transaction.getAmount());
+		transferer.setAmount(transferer.getAmount() - transaction.getAmount());
 
-		HttpEntity<Account> minusRequest = new HttpEntity<Account>(transferer, headers);
-		restTemplate.put("http://localhost:8888/account", minusRequest, Account.class);
-
-		Account beneficiary = accountRespone;
-		beneficiary.setAmount(accountRespone.getAmount() + transaction.getAmount());
-
-		HttpEntity<Account> plusRequest = new HttpEntity<Account>(beneficiary, headers);
-		restTemplate.put("http://localhost:8888/account", plusRequest, Account.class);
+		beneficiary.setAmount(beneficiary.getAmount() + transaction.getAmount());
 
 		Transaction finalTransactionBenificiar = new Transaction();
 		finalTransactionBenificiar.setAccountNumber(beneficiary.getAccountNumber());
 		finalTransactionBenificiar.setAmount(transaction.getAmount());
 		finalTransactionBenificiar.setCreated("" + System.currentTimeMillis());
 		finalTransactionBenificiar.setTicket("RSBT" + System.currentTimeMillis());
-		finalTransactionBenificiar.setAccountDetails(account);
-
-		HttpEntity<Transaction> benificierRequest = new HttpEntity<Transaction>(finalTransactionBenificiar, headers);
-		restTemplate.postForObject("http://localhost:8888/transactions/data", benificierRequest, Transaction.class);
+		finalTransactionBenificiar.setIntended(transferer);
+		transferer.setTransactions(Arrays.asList(finalTransactionBenificiar));
 
 		Transaction finalTransactionTransferer = new Transaction();
-		finalTransactionTransferer.setAccountNumber(account.getAccountNumber());
+		finalTransactionTransferer.setAccountNumber(transferer.getAccountNumber());
 		finalTransactionTransferer.setAmount(transaction.getAmount());
 		finalTransactionTransferer.setCreated("" + System.currentTimeMillis());
 		finalTransactionTransferer.setTicket("RSBT" + System.currentTimeMillis());
-		finalTransactionTransferer.setAccountDetails(beneficiary);
+		finalTransactionTransferer.setIntended(beneficiary);
+		beneficiary.setTransactions(Arrays.asList(finalTransactionTransferer));
 
-		HttpEntity<Transaction> transfererRequest = new HttpEntity<Transaction>(finalTransactionTransferer, headers);
-		restTemplate.postForObject("http://localhost:8888/transactions/data", transfererRequest, Transaction.class);
+		HttpEntity<Account> plusRequest = new HttpEntity<Account>(beneficiary, headers);
+		restTemplate.put("http://localhost:8888/account", plusRequest, Account.class);
+
+		HttpEntity<Account> minusRequest = new HttpEntity<Account>(transferer, headers);
+		restTemplate.put("http://localhost:8888/account", minusRequest, Account.class);
+
+		httpServletRequest.getSession().setAttribute("account",
+				restTemplate.exchange("http://localhost:8888/account/" + transferer.getAccountNumber(), HttpMethod.GET,
+						new HttpEntity<T>(headers), Account.class).getBody());
 
 		return ConstantValues.USER_HOME;
 
@@ -179,35 +182,47 @@ public class UserController {
 	public <T> String printPdf(HttpServletRequest httpServletRequest, Document document, PdfWriter pdfWriter,
 			HttpServletResponse response) {
 		Account account = (Account) httpServletRequest.getSession().getAttribute("account");
-
+		User user = (User) httpServletRequest.getSession().getAttribute("user");
 		try {
 			response.setHeader("Expires", "0");
 			response.setHeader("Cache-Control", "must-revalidate, post-check=0, pre-check=0");
 			response.setHeader("Pragma", "public");
-			response.setContentType("application/pdf");
-			PdfWriter.getInstance(document, response.getOutputStream());
+			response.setHeader("Content-disposition", "attachment; filename=" + user.getAccountNumber() + ".pdf");
+			response.setContentType("application/x-msdownload");
+			pdfWriter = PdfWriter.getInstance(document, response.getOutputStream());
 			document.open();
-			@SuppressWarnings("unchecked")
-			ResponseEntity<Transaction[]> transactionsEntitties = restTemplate.exchange(
-					"http://localhost:8888/transactions/data/account/" + account.getAccountNumber(), HttpMethod.GET,
-					new HttpEntity<T>(headers), Transaction[].class);
-			Transaction[] transactions = transactionsEntitties.getBody();
+			Paragraph paragraph = new Paragraph(
+					user.getFirstName() + " " + user.getLastName() + " (" + user.getAccountNumber() + ")");
+			paragraph.setKeepTogether(true);
+			paragraph.setAlignment(1);
+			document.add(paragraph);
+
+			Account currentAccount = restTemplate
+					.exchange("http://localhost:8888/account/" + account.getAccountNumber(), HttpMethod.GET,
+							new HttpEntity<T>(headers), Account.class)
+					.getBody();
+
+			System.out.println("Result: " + currentAccount);
+			List<Transaction> transactions = currentAccount.getTransactions();
 
 			Table table = new Table(3);
+			table.setBorder(10);
+			table.setPadding(5);
 			table.addCell("Account Number");
 			table.addCell("Amount");
 			table.addCell("Time");
 			for (Transaction transaction : transactions) {
+
 				table.addCell(transaction.getAccountNumber().toString());
 				table.addCell(transaction.getAmount().toString());
-				table.addCell(transaction.getCreated());
+				table.addCell(sdf.format(new Date(Long.parseLong(account.getCreated()))));
 
 			}
 			document.add(table);
 			document.close();
 
 		} catch (DocumentException | IOException e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
 		}
 

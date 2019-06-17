@@ -29,6 +29,9 @@ public class AccountController {
 
 	@RequestMapping(method = RequestMethod.PUT)
 	public Account saveAccount(@RequestBody Account account) {
+		
+		System.out.println("Account edit called: "+account);
+		
 		return service.saveAccount(account);
 	}
 

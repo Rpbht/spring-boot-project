@@ -1,21 +1,28 @@
 package com.rahul.bank.rahulsavingbankaccountapi.model;
 
+import java.io.Serializable;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "transaction_tbl")
-@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
-public class Transaction {
+public class Transaction implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8049113735428777583L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,11 +41,9 @@ public class Transaction {
 	@Column(name = "created")
 	private String created;
 	
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JsonIgnore
-	@JoinColumn(name = "account_id")
-	private Account accountDetails;
+	@JsonBackReference
+	@ManyToOne(fetch=FetchType.EAGER)
+	private Account account;
 
 	public Transaction() {
 	}
@@ -66,7 +71,6 @@ public class Transaction {
 		this.amount = amount;
 		this.accountNumber = accountNumber;
 		this.created = created;
-		this.accountDetails = accountDetails;
 	}
 
 	public Transaction(String ticket, Long amount, Long accountNumber, String created, Account accountDetails) {
@@ -75,7 +79,6 @@ public class Transaction {
 		this.amount = amount;
 		this.accountNumber = accountNumber;
 		this.created = created;
-		this.accountDetails = accountDetails;
 	}
 
 	public Long getId() {
@@ -117,19 +120,20 @@ public class Transaction {
 	public void setCreated(String created) {
 		this.created = created;
 	}
-	@JsonIgnore
+	
+
 	public Account getAccount() {
-		return accountDetails;
+		return account;
 	}
 
 	public void setAccount(Account account) {
-		this.accountDetails = account;
+		this.account = account;
 	}
 
 	@Override
 	public String toString() {
 		return "Transaction [id=" + id + ", ticket=" + ticket + ", amount=" + amount + ", accountNumber="
-				+ accountNumber + ", created=" + created + ", accountDetails=" + accountDetails + "]";
+				+ accountNumber + ", created=" + created + "]";
 	}
 
 }
