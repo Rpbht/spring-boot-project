@@ -21,19 +21,16 @@ public class RequestFIlter extends ZuulFilter {
 
 	@Override
 	public boolean shouldFilter() {
-		System.out.println("shouldFilter");
 		return true;
 	}
 
 	@Override
 	public int filterOrder() {
-		System.out.println("filterOrder");
 		return 1;
 	}
 
 	@Override
 	public String filterType() {
-		System.out.println("filterOrder");
 		return "pre";
 	}
 

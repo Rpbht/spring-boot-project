@@ -15,7 +15,7 @@ public class Account implements Serializable {
 	private Long accountNumber;
 	private String ifscCode;
 	private String branch;
-	private long amount;
+	private double amount;
 	private String created;
 	@JsonManagedReference
 	private List<Transaction> transactions;
@@ -23,7 +23,7 @@ public class Account implements Serializable {
 	public Account() {
 	}
 
-	public Account(Long accountNumber, String ifscCode, String branch, long amount, String created) {
+	public Account(Long accountNumber, String ifscCode, String branch, double amount, String created) {
 		this.accountNumber = accountNumber;
 		this.ifscCode = ifscCode;
 		this.branch = branch;
@@ -31,7 +31,7 @@ public class Account implements Serializable {
 		this.created = created;
 	}
 
-	public Account(Long id, Long accountNumber, String ifscCode, String branch, long amount, String created) {
+	public Account(Long id, Long accountNumber, String ifscCode, String branch, double amount, String created) {
 		super();
 		this.id = id;
 		this.accountNumber = accountNumber;
@@ -73,11 +73,11 @@ public class Account implements Serializable {
 		this.branch = branch;
 	}
 
-	public long getAmount() {
+	public double getAmount() {
 		return amount;
 	}
 
-	public void setAmount(long amount) {
+	public void setAmount(double amount) {
 		this.amount = amount;
 	}
 

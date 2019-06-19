@@ -1,11 +1,13 @@
 package com.rahul.savingbank.rahulsavingbank.controller;
 
 import java.io.IOException;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import javax.net.ssl.HttpsURLConnection;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -28,6 +30,7 @@ import com.lowagie.text.Table;
 import com.lowagie.text.pdf.PdfWriter;
 import com.rahul.savingbank.rahulsavingbank.model.Account;
 import com.rahul.savingbank.rahulsavingbank.model.Inquiry;
+import com.rahul.savingbank.rahulsavingbank.model.Interest;
 import com.rahul.savingbank.rahulsavingbank.model.Transaction;
 import com.rahul.savingbank.rahulsavingbank.model.User;
 import com.rahul.savingbank.rahulsavingbank.utils.ConstantValues;
@@ -69,6 +72,8 @@ public class UserController {
 				userResponse.getCity(), (long) 0.0, "" + System.currentTimeMillis());
 		HttpEntity<Account> accountRequest = new HttpEntity<Account>(account, headers);
 		restTemplate.postForObject("http://localhost:8888/account", accountRequest, Account.class);
+		HttpEntity<Interest> accountInterest = new HttpEntity<Interest>(new Interest(account.getAccountNumber(),0), headers);
+		restTemplate.postForObject("http://localhost:8888/interest/value", accountInterest, Interest.class);
 		httpServletRequest.getSession().setAttribute("msg", "Registered successfully!");
 		return ConstantValues.USER_LOGIN_VIEW;
 	}
@@ -124,7 +129,7 @@ public class UserController {
 
 	@PostMapping(value = ConstantValues.USER_TRANSFERED)
 	public <T> String transfered(@ModelAttribute("transaction") Transaction transaction,
-			HttpServletRequest httpServletRequest) {
+			HttpServletRequest httpServletRequest) throws IOException {
 
 		Account beneficiary = restTemplate.exchange("http://localhost:8888/account/" + transaction.getAccountNumber(),
 				HttpMethod.GET, new HttpEntity<T>(headers), Account.class).getBody();
@@ -134,6 +139,10 @@ public class UserController {
 			return ConstantValues.USER_TRANSACTION_VIEW;
 		}
 		Account transferer = (Account) httpServletRequest.getSession().getAttribute("account");
+
+		User user = (User) httpServletRequest.getSession().getAttribute("user");
+
+		System.out.println("User:::: " + user);
 
 		if (beneficiary.getAccountNumber().equals(transferer.getAccountNumber())) {
 			httpServletRequest.getSession().setAttribute("bmsg", "You cannot transfer to your own account");
@@ -167,8 +176,24 @@ public class UserController {
 		HttpEntity<Account> plusRequest = new HttpEntity<Account>(beneficiary, headers);
 		restTemplate.put("http://localhost:8888/account", plusRequest, Account.class);
 
+		URL urlSernder = new URL(null,
+				"http://sms.bulksmsserviceproviders.com/api/send_http.php?authkey=4cf4ccf95031264d9e952b17c7be4edb&mobiles="
+						+ user.getMobileNumber() + "&message=" + transaction.getAmount()
+						+ "has been credited&sender=ASDFGH&route=B",
+				new sun.net.www.protocol.https.Handler());
+		HttpsURLConnection connectionSender = (HttpsURLConnection) urlSernder.openConnection();
+		connectionSender.setRequestMethod("GET");
+
 		HttpEntity<Account> minusRequest = new HttpEntity<Account>(transferer, headers);
 		restTemplate.put("http://localhost:8888/account", minusRequest, Account.class);
+
+		URL urlReceiver = new URL(null,
+				"http://sms.bulksmsserviceproviders.com/api/send_http.php?authkey=4cf4ccf95031264d9e952b17c7be4edb&mobiles="
+						+ user.getMobileNumber() + "&message=" + transaction.getAmount()
+						+ "has been debited&sender=GFDSAW&route=B",
+				new sun.net.www.protocol.https.Handler());
+		HttpsURLConnection connectionReceiver = (HttpsURLConnection) urlReceiver.openConnection();
+		connectionReceiver.setRequestMethod("GET");
 
 		httpServletRequest.getSession().setAttribute("account",
 				restTemplate.exchange("http://localhost:8888/account/" + transferer.getAccountNumber(), HttpMethod.GET,
