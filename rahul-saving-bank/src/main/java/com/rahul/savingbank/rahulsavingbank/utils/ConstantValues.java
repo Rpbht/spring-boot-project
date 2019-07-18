@@ -1,6 +1,10 @@
 package com.rahul.savingbank.rahulsavingbank.utils;
 
 public class ConstantValues {
+	
+	//base url 
+	
+	public static final String BASE_URL = "http://localhost:8888";
 
 	// bank
 
