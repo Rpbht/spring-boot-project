@@ -25,7 +25,7 @@ public class SchedularService {
 	@Scheduled(cron = "0 */1 * * * ?")
 	private <T> void updateInterest() {
 
-		Account[] accounts = restTemplate.exchange("http://localhost:8888/account/", HttpMethod.GET,
+		Account[] accounts = restTemplate.exchange("http://SpringBoot-Bank-Gateway:8888/account/", HttpMethod.GET,
 				new HttpEntity<T>(headers), Account[].class, Account.class).getBody();
 
 		for (Account account : accounts) {
@@ -34,7 +34,7 @@ public class SchedularService {
 
 			Double interestAmount = UtilMethods.calculateInterest(account.getAmount());
 
-			Interest previousInterest = restTemplate.exchange("http://localhost:8888/interest/value/" + accountNumber,
+			Interest previousInterest = restTemplate.exchange("http://SpringBoot-Bank-Gateway:8888/interest/value/" + accountNumber,
 					HttpMethod.GET, new HttpEntity<T>(headers), Interest.class).getBody();
 
 			double newAmont = Double.valueOf(df2.format(previousInterest.getAmount() + interestAmount));
@@ -42,7 +42,7 @@ public class SchedularService {
 			Interest interest = new Interest(accountNumber, newAmont);
 
 			HttpEntity<Interest> interestReq = new HttpEntity<Interest>(interest, headers);
-			restTemplate.put("http://localhost:8888/interest/value/edit", interestReq, Interest.class);
+			restTemplate.put("http://SpringBoot-Bank-Gateway:8888/interest/value/edit", interestReq, Interest.class);
 
 			// run 3monthly job and transactions
 		}
@@ -52,20 +52,20 @@ public class SchedularService {
 	@Scheduled(cron = "0 0 12 1 */3 ?")
 	private <T> void payInterest() {
 
-		Account[] accounts = restTemplate.exchange("http://localhost:8888/account/", HttpMethod.GET,
+		Account[] accounts = restTemplate.exchange("http://SpringBoot-Bank-Gateway:8888/account/", HttpMethod.GET,
 				new HttpEntity<T>(headers), Account[].class, Account.class).getBody();
 
 		for (Account account : accounts) {
 
 			Interest interest = restTemplate
-					.exchange("http://localhost:8888/interest/value/" + account.getAccountNumber(), HttpMethod.GET,
+					.exchange("http://SpringBoot-Bank-Gateway:8888/interest/value/" + account.getAccountNumber(), HttpMethod.GET,
 							new HttpEntity<T>(headers), Interest.class)
 					.getBody();
 
 			account.setAmount(account.getAmount() + interest.getAmount());
 
 			HttpEntity<Account> accountRequest = new HttpEntity<Account>(account, headers);
-			restTemplate.postForObject("http://localhost:8888/account", accountRequest, Account.class);
+			restTemplate.postForObject("http://SpringBoot-Bank-Gateway:8888/account", accountRequest, Account.class);
 			System.out.println("Account updated");
 		}
 	}

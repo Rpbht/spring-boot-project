@@ -1,0 +1,79 @@
+SpringBoot-Bank-DB:
+  image: mysql:5.7.21
+  container_name: SpringBoot-Bank-DB
+  dns:
+  - 8.8.8.8
+  - 8.8.4.4
+  ports:
+  - "3306:3306"
+  environment:
+  - MYSQL_ROOT_PASSWORD=root
+  - MYSQL_USER=root
+  - MYSQL_PASSWORD=root
+  - MYSQL_DATABASE=microservice-db
+  volumes:
+  - ./mysql_data:/var/lib/mysql
+SpringBoot-Bank-Frontend:
+  image: dockerhub.cignex.com/cd-images/springboot-bank-frontend:1.0.0
+  container_name: SpringBoot-Bank-Frontend
+  dns:
+  - 8.8.8.8
+  - 8.8.4.4
+  ports:
+  - "8080:8080"
+  links:
+  - SpringBoot-Bank-DB
+  - SpringBoot-Bank-Account-api
+  - SpringBoot-Bank-Gateway
+SpringBoot-Bank-Gateway:
+  image: dockerhub.cignex.com/cd-images/springboot-bank-gateway:1.0.0
+  container_name: SpringBoot-Bank-Gateway
+  dns:
+  - 8.8.8.8
+  - 8.8.4.4
+  ports:
+  - "8888:8888"
+  links:
+  - SpringBoot-Bank-Account-api
+  - SpringBoot-Bank-user-api
+  - SpringBoot-Bank-inquiry-api
+SpringBoot-Bank-Account-api:
+  image: dockerhub.cignex.com/cd-images/springboot-bank-account-api:1.0.0
+  container_name: SpringBoot-Bank-Account-api
+  dns:
+  - 8.8.8.8
+  - 8.8.4.4
+  ports:
+  - "8002:8002"
+  links:
+  - SpringBoot-Bank-DB
+SpringBoot-Bank-inquiry-api:
+  image: dockerhub.cignex.com/cd-images/springboot-bank-inquiry-api:1.0.0
+  container_name: SpringBoot-Bank-inquiry-api
+  dns:
+  - 8.8.8.8
+  - 8.8.4.4
+  ports:
+  - "8003:8003"
+  links:
+  - SpringBoot-Bank-DB
+SpringBoot-Bank-interest:
+  image: dockerhub.cignex.com/cd-images/springboot-bank-interest:1.0.0
+  container_name: SpringBoot-Bank-interest
+  dns:
+  - 8.8.8.8
+  - 8.8.4.4
+  ports:
+  - "8004:8004"
+  links:
+  - SpringBoot-Bank-DB  
+SpringBoot-Bank-user-api:
+  image: dockerhub.cignex.com/cd-images/springboot-bank-account-api:1.0.0
+  container_name: SpringBoot-Bank-user-api
+  dns:
+  - 8.8.8.8
+  - 8.8.4.4
+  ports:
+  - "8001:8001"
+  links:
+  - SpringBoot-Bank-DB    
