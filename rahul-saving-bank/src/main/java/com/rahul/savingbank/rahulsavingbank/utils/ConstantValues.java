@@ -4,7 +4,7 @@ public class ConstantValues {
 	
 	//base url 
 	
-	public static final String BASE_URL = "SpringBoot-Bank-Gateway";
+	public static final String BASE_URL = "http://SpringBoot-Bank-Gateway:8888";
 
 	// bank
 
