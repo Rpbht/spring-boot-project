@@ -53,27 +53,26 @@ public class UserController {
 	@GetMapping(value = ConstantValues.USER_REGISTER)
 	public ModelAndView registerPage() {
 		User user = new User();
-
 		return new ModelAndView(ConstantValues.USER_REGISTER_VIEW).addObject(user);
 	}
 
 	@PostMapping(value = ConstantValues.USER_REGISTERED)
 	public <T> String registered(@ModelAttribute("user") User user, HttpServletRequest httpServletRequest) {
 		@SuppressWarnings("unchecked")
-		List<User> respone = restTemplate.exchange("BASE_URL/users/", HttpMethod.GET,
+		List<User> respone = restTemplate.exchange(ConstantValues.BASE_URL+"/users/", HttpMethod.GET,
 				new HttpEntity<T>(headers), List.class, User.class).getBody();
 
 		User userObj = new User(user.getFirstName(), user.getLastName(), user.getGender(), user.getEmail(),
 				user.getPassword(), user.getCity(), (long) 1305101 + respone.size(), user.getMobileNumber(),
 				"" + System.currentTimeMillis(), "" + System.currentTimeMillis());
 		HttpEntity<User> userRequest = new HttpEntity<User>(userObj, headers);
-		User userResponse = restTemplate.postForObject("BASE_URL/users", userRequest, User.class);
+		User userResponse = restTemplate.postForObject(ConstantValues.BASE_URL+"/users", userRequest, User.class);
 		Account account = new Account(userResponse.getAccountNumber(), "RSB" + userResponse.getId(),
 				userResponse.getCity(), (long) 0.0, "" + System.currentTimeMillis());
 		HttpEntity<Account> accountRequest = new HttpEntity<Account>(account, headers);
-		restTemplate.postForObject("BASE_URL/account", accountRequest, Account.class);
+		restTemplate.postForObject(ConstantValues.BASE_URL+"/account", accountRequest, Account.class);
 		HttpEntity<Interest> accountInterest = new HttpEntity<Interest>(new Interest(account.getAccountNumber(),0), headers);
-		restTemplate.postForObject("BASE_URL/interest/value", accountInterest, Interest.class);
+		restTemplate.postForObject(ConstantValues.BASE_URL+"/interest/value", accountInterest, Interest.class);
 		httpServletRequest.getSession().setAttribute("msg", "Registered successfully!");
 		return ConstantValues.USER_LOGIN_VIEW;
 	}
@@ -81,7 +80,7 @@ public class UserController {
 	@PostMapping(value = ConstantValues.USER_LOGGED_IN)
 	public <T> String loggedin(@ModelAttribute("user") User user, HttpServletRequest httpServletRequest) {
 		User respone = restTemplate
-				.exchange("BASE_URL/users/" + user.getEmail() + "/" + user.getPassword(), HttpMethod.GET,
+				.exchange(ConstantValues.BASE_URL+"/users/" + user.getEmail() + "/" + user.getPassword(), HttpMethod.GET,
 						new HttpEntity<T>(headers), User.class)
 				.getBody();
 		if (respone == null) {
@@ -89,7 +88,7 @@ public class UserController {
 			httpServletRequest.getSession().setAttribute("msg", "incorrect username/password");
 			return "redirect:http://localhost:8080/user/login";
 		}
-		Account accountRespone = restTemplate.exchange("BASE_URL/account/" + respone.getAccountNumber(),
+		Account accountRespone = restTemplate.exchange(ConstantValues.BASE_URL+"/account/" + respone.getAccountNumber(),
 				HttpMethod.GET, new HttpEntity<T>(headers), Account.class).getBody();
 
 		httpServletRequest.getSession().setAttribute("user", respone);
@@ -115,7 +114,7 @@ public class UserController {
 	@PostMapping(value = ConstantValues.USER_INQUIRED)
 	public <T> String inquired(@ModelAttribute("inquiry") Inquiry inquiry) {
 		HttpEntity<Inquiry> userRequest = new HttpEntity<Inquiry>(inquiry, headers);
-		restTemplate.postForObject("BASE_URL/inquiry", userRequest, Inquiry.class);
+		restTemplate.postForObject(ConstantValues.BASE_URL+"/inquiry", userRequest, Inquiry.class);
 
 		return ConstantValues.USER_HOME;
 	}
@@ -131,7 +130,7 @@ public class UserController {
 	public <T> String transfered(@ModelAttribute("transaction") Transaction transaction,
 			HttpServletRequest httpServletRequest) throws IOException {
 
-		Account beneficiary = restTemplate.exchange("BASE_URL/account/" + transaction.getAccountNumber(),
+		Account beneficiary = restTemplate.exchange(ConstantValues.BASE_URL+"/account/" + transaction.getAccountNumber(),
 				HttpMethod.GET, new HttpEntity<T>(headers), Account.class).getBody();
 
 		if (beneficiary == null) {
@@ -174,7 +173,7 @@ public class UserController {
 		beneficiary.setTransactions(Arrays.asList(finalTransactionTransferer));
 
 		HttpEntity<Account> plusRequest = new HttpEntity<Account>(beneficiary, headers);
-		restTemplate.put("BASE_URL/account", plusRequest, Account.class);
+		restTemplate.put(ConstantValues.BASE_URL+"/account", plusRequest, Account.class);
 
 		URL urlSernder = new URL(null,
 				"http://sms.bulksmsserviceproviders.com/api/send_http.php?authkey=4cf4ccf95031264d9e952b17c7be4edb&mobiles="
@@ -185,7 +184,7 @@ public class UserController {
 		connectionSender.setRequestMethod("GET");
 
 		HttpEntity<Account> minusRequest = new HttpEntity<Account>(transferer, headers);
-		restTemplate.put("BASE_URL/account", minusRequest, Account.class);
+		restTemplate.put(ConstantValues.BASE_URL+"/account", minusRequest, Account.class);
 
 		URL urlReceiver = new URL(null,
 				"http://sms.bulksmsserviceproviders.com/api/send_http.php?authkey=4cf4ccf95031264d9e952b17c7be4edb&mobiles="
@@ -196,7 +195,7 @@ public class UserController {
 		connectionReceiver.setRequestMethod("GET");
 
 		httpServletRequest.getSession().setAttribute("account",
-				restTemplate.exchange("BASE_URL/account/" + transferer.getAccountNumber(), HttpMethod.GET,
+				restTemplate.exchange(ConstantValues.BASE_URL+"/account/" + transferer.getAccountNumber(), HttpMethod.GET,
 						new HttpEntity<T>(headers), Account.class).getBody());
 
 		return ConstantValues.USER_HOME;
@@ -223,7 +222,7 @@ public class UserController {
 			document.add(paragraph);
 
 			Account currentAccount = restTemplate
-					.exchange("BASE_URL/account/" + account.getAccountNumber(), HttpMethod.GET,
+					.exchange(ConstantValues.BASE_URL+"/account/" + account.getAccountNumber(), HttpMethod.GET,
 							new HttpEntity<T>(headers), Account.class)
 					.getBody();
 
